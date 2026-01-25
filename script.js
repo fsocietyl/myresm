@@ -37,22 +37,22 @@
         }
     }
 
-    if (navToggle && navMenu) {
+    if (navToggle) {
         navToggle.addEventListener("click", () => {
-            const isOpen = navMenu.classList.toggle("active");
+            const isOpen = document.body.classList.toggle("nav-open");
             navToggle.setAttribute("aria-expanded", String(isOpen));
         });
 
         navLinks.forEach((link) => {
             link.addEventListener("click", () => {
-                navMenu.classList.remove("active");
+                document.body.classList.remove("nav-open");
                 navToggle.setAttribute("aria-expanded", "false");
             });
         });
 
         document.addEventListener("keydown", (event) => {
             if (event.key === "Escape") {
-                navMenu.classList.remove("active");
+                document.body.classList.remove("nav-open");
                 navToggle.setAttribute("aria-expanded", "false");
             }
         });
