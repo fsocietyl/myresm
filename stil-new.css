@@ -952,9 +952,42 @@ body.nav-open {
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
+.form-group .input-error {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15);
+}
+
 .form-group textarea {
     resize: vertical;
     min-height: 120px;
+}
+
+.form-error {
+    color: var(--accent-color);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    min-height: 1.2rem;
+}
+
+.form-status {
+    margin-top: 1rem;
+    color: var(--secondary-color);
+    font-size: 0.95rem;
+}
+
+.form-note {
+    margin-top: 1.5rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.form-note a {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.form-note a:hover {
+    color: var(--secondary-color);
 }
 
 .info-card {

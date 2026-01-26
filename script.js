@@ -8,6 +8,7 @@
     const navLinks = document.querySelectorAll(".nav-link");
     const navMenu = document.getElementById("navMenu");
     const navToggle = document.querySelector(".nav-toggle");
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const normalize = (href) => {
         if (!href) return "";
@@ -74,6 +75,97 @@
         fadeTargets.forEach((target) => observer.observe(target));
     } else {
         fadeTargets.forEach((target) => target.classList.add("is-visible"));
+    }
+
+    const typingTargets = document.querySelectorAll(".js-typing");
+    if (typingTargets.length && !prefersReducedMotion) {
+        typingTargets.forEach((target) => {
+            const text = target.dataset.text || target.textContent.trim();
+            if (!text) return;
+            target.textContent = "";
+            let index = 0;
+            const typeNext = () => {
+                target.textContent += text.charAt(index);
+                index += 1;
+                if (index < text.length) {
+                    window.setTimeout(typeNext, 70);
+                }
+            };
+            window.setTimeout(typeNext, 300);
+        });
+    }
+
+    const contactForm = document.getElementById("contactForm");
+    if (contactForm) {
+        const formStatus = document.getElementById("formStatus");
+        const fields = {
+            name: contactForm.querySelector("#contactName"),
+            email: contactForm.querySelector("#contactEmail"),
+            message: contactForm.querySelector("#contactMessage"),
+        };
+
+        const errorFor = (key) =>
+            contactForm.querySelector(`[data-error-for="${key}"]`);
+
+        const setError = (key, message) => {
+            const field = fields[key];
+            const errorNode = errorFor(key);
+            if (field) field.classList.toggle("input-error", Boolean(message));
+            if (errorNode) errorNode.textContent = message || "";
+        };
+
+        const validate = () => {
+            let valid = true;
+            const nameValue = fields.name.value.trim();
+            const emailValue = fields.email.value.trim();
+            const messageValue = fields.message.value.trim();
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (nameValue.length < 2) {
+                setError("name", "Please enter your name.");
+                valid = false;
+            } else {
+                setError("name", "");
+            }
+
+            if (!emailPattern.test(emailValue)) {
+                setError("email", "Please enter a valid email address.");
+                valid = false;
+            } else {
+                setError("email", "");
+            }
+
+            if (messageValue.length < 10) {
+                setError("message", "Message should be at least 10 characters.");
+                valid = false;
+            } else {
+                setError("message", "");
+            }
+
+            return valid;
+        };
+
+        contactForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            if (formStatus) formStatus.textContent = "";
+            if (!validate()) return;
+
+            const subject = encodeURIComponent("Contact from Portfolio");
+            const bodyLines = [
+                `Name: ${fields.name.value.trim()}`,
+                `Email: ${fields.email.value.trim()}`,
+                "",
+                fields.message.value.trim(),
+            ];
+            const body = encodeURIComponent(bodyLines.join("\n"));
+            const mailtoLink = `mailto:spacewalkersa@gmail.com?subject=${subject}&body=${body}`;
+
+            if (formStatus) {
+                formStatus.textContent = "Opening your email client...";
+            }
+            window.location.href = mailtoLink;
+            contactForm.reset();
+        });
     }
 
     const backToTop = document.createElement("button");
