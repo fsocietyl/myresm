@@ -9,6 +9,7 @@
     const navMenu = document.getElementById("navMenu");
     const navToggle = document.querySelector(".nav-toggle");
     const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersLightScheme = window.matchMedia("(prefers-color-scheme: light)").matches;
 
     const normalize = (href) => {
         if (!href) return "";
@@ -168,6 +169,30 @@
         });
     }
 
+    const themeToggle = document.createElement("button");
+    themeToggle.className = "theme-toggle";
+    themeToggle.type = "button";
+    themeToggle.setAttribute("aria-label", "Toggle theme");
+    const setThemeIcon = (isLight) => {
+        themeToggle.innerHTML = isLight ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+    };
+
+    const savedTheme = localStorage.getItem("theme");
+    const initialLight = savedTheme ? savedTheme === "light" : prefersLightScheme;
+    document.body.classList.toggle("theme-light", initialLight);
+    setThemeIcon(initialLight);
+    document.body.appendChild(themeToggle);
+
+    themeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.toggle("theme-light");
+        localStorage.setItem("theme", isLight ? "light" : "dark");
+        setThemeIcon(isLight);
+    });
+
+    const progressBar = document.createElement("div");
+    progressBar.className = "scroll-progress";
+    document.body.appendChild(progressBar);
+
     const backToTop = document.createElement("button");
     backToTop.className = "back-to-top";
     backToTop.type = "button";
@@ -183,8 +208,20 @@
         }
     };
 
-    window.addEventListener("scroll", toggleBackToTop, { passive: true });
-    toggleBackToTop();
+    const updateProgress = () => {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = `${progress}%`;
+    };
+
+    const handleScroll = () => {
+        toggleBackToTop();
+        updateProgress();
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
 
     backToTop.addEventListener("click", () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
